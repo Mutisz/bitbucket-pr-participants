@@ -1,47 +1,67 @@
+const localStoragePrefix = 'bitbucketPrParticipants-v1';
+
 const workspaceId = 'workspace';
 const repositoryId = 'repository';
 const usernameId = 'username';
 const passwordId = 'password';
 const participantsId = 'participants';
-const startCountButtonId = 'start_count';
+const startCountButtonId = 'start-count';
 
-const storeWorkspace = () => localStorage.setItem(workspaceId, document.getElementById(workspaceId).value);
-const storeRepository = () => localStorage.setItem(repositoryId, document.getElementById(repositoryId).value);
-const storeUsername = () => localStorage.setItem(usernameId, document.getElementById(usernameId).value);
-const storePassword = () => localStorage.setItem(passwordId, document.getElementById(passwordId).value);
-const storeParticipants = () => localStorage.setItem(participantsId, document.getElementById(participantsId).value);
+const rolesName = 'roles';
+const statesName = 'states';
+
+const createLocalStorageVariable = variableId => `${localStoragePrefix}-${variableId}`
+const storeFieldValue = variableId => localStorage.setItem(createLocalStorageVariable(variableId), document.getElementById(variableId).value);
+const getFieldValue = variableId => localStorage.getItem(createLocalStorageVariable(variableId));
+
+const storeWorkspace = () => storeFieldValue(workspaceId);
+const storeRepository = () => storeFieldValue(repositoryId);
+const storeUsername = () => storeFieldValue(usernameId);
+const storePassword = () => storeFieldValue(passwordId);
+const storeParticipants = () => storeFieldValue(participantsId);
+
+const checkboxGroupToList = (variableName) => {
+    let list = [];
+    document.getElementsByName(variableName).forEach(element => {
+        if (element.checked) {
+            list.push(element.value);
+        }
+    });
+
+    return list;
+}
 
 const loadDefaults = () => {
     const workspaceField = document.getElementById(workspaceId);
-    const storedWorkspace = localStorage.getItem(workspaceId);
+    const storedWorkspace = getFieldValue(workspaceId);
     workspaceField.onblur = storeWorkspace;
     if (storedWorkspace) {
         workspaceField.value = storedWorkspace;
     }
 
     const repositoryField = document.getElementById(repositoryId);
-    const storedRepository = localStorage.getItem(repositoryId);
+    const storedRepository = getFieldValue(repositoryId);
     repositoryField.onblur = storeRepository;
     if (storedRepository) {
         repositoryField.value = storedRepository;
     }
 
     const usernameField = document.getElementById(usernameId);
-    const storedUsername = localStorage.getItem(usernameId);
+    const storedUsername = getFieldValue(usernameId);
     usernameField.onblur = storeUsername;
     if (storedUsername) {
         usernameField.value = storedUsername;
     }
 
     const passwordField = document.getElementById(passwordId);
-    const storedPassword = localStorage.getItem(passwordId);
+    const storedPassword = getFieldValue(passwordId);
     passwordField.onblur = storePassword;
     if (storedPassword) {
         passwordField.value = storedPassword;
     }
 
     const participantsField = document.getElementById(participantsId);
-    const storedParticipants = localStorage.getItem(participantsId);
+    const storedParticipants = getFieldValue(participantsId);
     participantsField.onblur = storeParticipants;
     if (storedParticipants) {
         participantsField.value = storedParticipants;
@@ -63,13 +83,8 @@ const startCount = () => {
     }
 
     const countedParticipantList = participants.split(/\r?\n/);
-    const countedRoleList = [];
-    document.getElementsByName('roles').forEach(role => {
-        if (role.checked) {
-            countedRoleList.push(role.value);
-        }
-    });
-    const countApproved =  document.getElementsByName('exclude_state')[0].checked === false;
+    const countedRoleList = checkboxGroupToList(rolesName);
+    const countedStateList = checkboxGroupToList(statesName);
 
     const maxCallCount = 20;
     const basicAuth = btoa(`${username}:${password}`);
@@ -95,8 +110,9 @@ const startCount = () => {
                 let name = participant.user.display_name;
                 let countParticipant = countedParticipantList.includes(name);
                 let countRole = countedRoleList.includes(participant.role);
-                let countState = participant.approved === false || countApproved === true;
-                if (countParticipant && countRole && countState) {
+                let countStateApproved = countedStateList.includes('APPROVED') === true || participant.approved === false;
+                let countStateNeedsWork = countedStateList.includes('NEEDS_WORK') === true || participant.state !== 'changes_requested';
+                if (countParticipant && countRole && countStateApproved && countStateNeedsWork) {
                     prCounter[name]++;
                 }
             })
@@ -131,8 +147,10 @@ const startCount = () => {
 
     Promise.allSettled(prPromiseList)
         .then(() => {
+            let prCounterEntries = Object.entries(prCounter);
+            let prCounterSorted = Object.fromEntries(prCounterEntries.sort((a, b) => a[1] - b[1]));
             let prCounterStringList = [];
-            for(let name in prCounter) {
+            for(let name in prCounterSorted) {
                 let count = prCounter[name];
                 prCounterStringList.push(`${name}: ${count}`);
             }

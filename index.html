@@ -11,7 +11,7 @@
 </head>
 <body style="background-color:#007bff">
 <noscript> You need to enable JavaScript to run this app! </noscript>
-<div style="margin: 40px auto;padding:20px;width:800px;background-color:white;border-radius:10px">
+<div id="form" style="margin: 40px auto;padding:20px;width:800px;background-color:white;border-radius:10px">
     <form>
         <div class="form-group row">
             <label for="workspace" class="col-4 col-form-label">Workspace</label>
@@ -35,7 +35,7 @@
             <label for="password" class="col-4 col-form-label">Password</label>
             <div class="col-8">
                 <input id="password" name="password" type="password" required="required" class="form-control" aria-describedby="passwordHelpBlock">
-                <span id="passwordHelpBlock" class="form-text text-muted">Generate password here https://bitbucket.org/account/settings/app-passwords/ (requires PR read scope)</span>
+                <span id="passwordHelpBlock" class="form-text text-muted">Generate password <a href="https://bitbucket.org/account/settings/app-passwords/" target="_blank">here</a> (requires PR read scope)</span>
             </div>
         </div>
         <div class="form-group row">
@@ -59,17 +59,21 @@
             </div>
         </div>
         <div class="form-group row">
-            <label class="col-4">Exclude state</label>
+            <label class="col-4">States</label>
             <div class="col-8">
                 <div class="custom-control custom-checkbox custom-control-inline">
-                    <input name="exclude_state" id="exclude_state_0" type="checkbox" class="custom-control-input" checked="checked">
-                    <label for="exclude_state_0" class="custom-control-label">Approved</label>
+                    <input name="states" id="states_0" type="checkbox" class="custom-control-input" value="APPROVED">
+                    <label for="states_0" class="custom-control-label">Approved</label>
+                </div>
+                <div class="custom-control custom-checkbox custom-control-inline">
+                    <input name="states" id="states_1" type="checkbox" class="custom-control-input" value="NEEDS_WORK" checked="checked">
+                    <label for="states_1" class="custom-control-label">Needs work</label>
                 </div>
             </div>
         </div>
         <div class="form-group row">
             <div class="offset-4 col-8">
-                <button id="start_count" name="start_count" type="button" class="btn btn-primary">Count</button>
+                <button id="start-count" name="start-count" type="button" class="btn btn-primary">Count</button>
             </div>
         </div>
     </form>
