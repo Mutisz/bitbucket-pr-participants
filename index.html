@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="theme-color" content="#eeeeee" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="counter.js"></script>
+    <title>Bitbucket pull request participants</title>
+</head>
+<body>
+<noscript> You need to enable JavaScript to run this app! </noscript>
+<form>
+    <div class="form-group row">
+        <label for="workspace" class="col-4 col-form-label">Workspace</label>
+        <div class="col-8">
+            <input id="workspace" name="workspace" type="text" required="required" class="form-control" onblur="storeWorkspace()">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="repository" class="col-4 col-form-label">Repository</label>
+        <div class="col-8">
+            <input id="repository" name="repository" type="text" required="required" class="form-control" onblur="storeRepository()">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="username" class="col-4 col-form-label">Username</label>
+        <div class="col-8">
+            <input id="username" name="username" type="text" required="required" class="form-control" onblur="storeUsername()">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="password" class="col-4 col-form-label">Password</label>
+        <div class="col-8">
+            <input id="password" name="password" type="password" required="required" class="form-control" aria-describedby="passwordHelpBlock" onblur="storePassword()">
+            <span id="passwordHelpBlock" class="form-text text-muted">Generate password here https://bitbucket.org/account/settings/app-passwords/ (requires PR read scope)</span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="participants" class="col-4 col-form-label">Participants</label>
+        <div class="col-8">
+            <textarea id="participants" name="participants" cols="40" rows="6" class="form-control" aria-describedby="textareaHelpBlock" onblur="storeParticipants()"></textarea>
+            <span id="textareaHelpBlock" class="form-text text-muted">Write names and surnames of users you want to count pull requests for separated by new lines</span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-4">Roles</label>
+        <div class="col-8">
+            <div class="custom-control custom-checkbox custom-control-inline">
+                <input name="roles" id="roles_0" type="checkbox" class="custom-control-input" value="REVIEWER" checked="checked">
+                <label for="roles_0" class="custom-control-label">Reviewer</label>
+            </div>
+            <div class="custom-control custom-checkbox custom-control-inline">
+                <input name="roles" id="roles_1" type="checkbox" class="custom-control-input" value="PARTICIPANT" required="required">
+                <label for="roles_1" class="custom-control-label">Participant</label>
+            </div>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-4">Exclude state</label>
+        <div class="col-8">
+            <div class="custom-control custom-checkbox custom-control-inline">
+                <input name="exclude_state" id="exclude_state_0" type="checkbox" class="custom-control-input" checked="checked">
+                <label for="exclude_state_0" class="custom-control-label">Approved</label>
+            </div>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="offset-4 col-8">
+            <button name="submit" type="submit" class="btn btn-primary" onclick="countPrForParticipants()">Count</button>
+        </div>
+    </div>
+</form>
+</body>
+</html>
