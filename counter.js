@@ -1,44 +1,57 @@
 const workspaceId = 'workspace';
-const workspaceField = document.getElementById(workspaceId);
-const storedWorkspace = localStorage.getItem(workspaceId);
-if (storedWorkspace) {
-    workspaceField.value = storedWorkspace;
-}
-const storeWorkspace = () => localStorage.setItem(workspaceId, workspaceField.value);
-
 const repositoryId = 'repository';
-const repositoryField = document.getElementById(repositoryId);
-const storedRepository = localStorage.getItem(repositoryId);
-if (storedRepository) {
-    repositoryField.value = storedRepository;
-}
-const storeRepository = () => localStorage.setItem(repositoryId, repositoryField.value);
-
 const usernameId = 'username';
-const usernameField = document.getElementById(usernameId);
-const storedUsername = localStorage.getItem(usernameId);
-if (storedUsername) {
-    usernameField.value = storedUsername;
-}
-const storeUsername = () => localStorage.setItem(usernameId, usernameField.value);
-
 const passwordId = 'password';
-const passwordField = document.getElementById(passwordId);
-const storedPassword = localStorage.getItem(passwordId);
-if (storedPassword) {
-    passwordField.value = storedPassword;
-}
-const storePassword = () => localStorage.setItem(passwordId, passwordField.value);
-
 const participantsId = 'participants';
-const participantsField = document.getElementById(participantsId);
-const storedParticipants = localStorage.getItem(participantsId);
-if (storedParticipants) {
-    participantsField.value = storedParticipants;
-}
+const startCountButtonId = 'start_count';
+
+const storeWorkspace = () => localStorage.setItem(workspaceId, workspaceField.value);
+const storeRepository = () => localStorage.setItem(repositoryId, repositoryField.value);
+const storeUsername = () => localStorage.setItem(usernameId, usernameField.value);
+const storePassword = () => localStorage.setItem(passwordId, passwordField.value);
 const storeParticipants = () => localStorage.setItem(participantsId, participantsField.value);
 
-const countPrForParticipants = () => {
+const loadDefaults = () => {
+    const workspaceField = document.getElementById(workspaceId);
+    const storedWorkspace = localStorage.getItem(workspaceId);
+    workspaceField.onblur = storeWorkspace;
+    if (storedWorkspace) {
+        workspaceField.value = storedWorkspace;
+    }
+
+    const repositoryField = document.getElementById(repositoryId);
+    const storedRepository = localStorage.getItem(repositoryId);
+    repositoryField.onblur = storeRepository;
+    if (storedRepository) {
+        repositoryField.value = storedRepository;
+    }
+
+    const usernameField = document.getElementById(usernameId);
+    const storedUsername = localStorage.getItem(usernameId);
+    usernameField.onblur = storeUsername;
+    if (storedUsername) {
+        usernameField.value = storedUsername;
+    }
+
+    const passwordField = document.getElementById(passwordId);
+    const storedPassword = localStorage.getItem(passwordId);
+    passwordField.onblur = storePassword;
+    if (storedPassword) {
+        passwordField.value = storedPassword;
+    }
+
+    const participantsField = document.getElementById(participantsId);
+    const storedParticipants = localStorage.getItem(participantsId);
+    participantsField.onblur = storeParticipants;
+    if (storedParticipants) {
+        participantsField.value = storedParticipants;
+    }
+
+    const startCountButton = document.getElementById(startCountButtonId);
+    startCountButton.onclick = startCount;
+}
+
+const startCount = () => {
     const workspace = document.getElementById(workspaceId).value;
     const repository = document.getElementById(repositoryId).value;
     const username = document.getElementById(usernameId).value;
@@ -56,7 +69,7 @@ const countPrForParticipants = () => {
             countedRoleList.push(role.value);
         }
     });
-    const countApproved =  document.getElementsByName('roles')[0].checked == false;
+    const countApproved =  document.getElementsByName('exclude_state')[0].checked == false;
 
     const maxCallCount = 20;
     const basicAuth = btoa(`${username}:${password}`);
@@ -131,3 +144,4 @@ const countPrForParticipants = () => {
         });
 }
 
+window.onload = loadDefaults;
