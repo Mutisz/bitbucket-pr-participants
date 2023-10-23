@@ -5,11 +5,11 @@ const passwordId = 'password';
 const participantsId = 'participants';
 const startCountButtonId = 'start_count';
 
-const storeWorkspace = () => localStorage.setItem(workspaceId, workspaceField.value);
-const storeRepository = () => localStorage.setItem(repositoryId, repositoryField.value);
-const storeUsername = () => localStorage.setItem(usernameId, usernameField.value);
-const storePassword = () => localStorage.setItem(passwordId, passwordField.value);
-const storeParticipants = () => localStorage.setItem(participantsId, participantsField.value);
+const storeWorkspace = () => localStorage.setItem(workspaceId, document.getElementById(workspaceId).value);
+const storeRepository = () => localStorage.setItem(repositoryId, document.getElementById(repositoryId).value);
+const storeUsername = () => localStorage.setItem(usernameId, document.getElementById(usernameId).value);
+const storePassword = () => localStorage.setItem(passwordId, document.getElementById(passwordId).value);
+const storeParticipants = () => localStorage.setItem(participantsId, document.getElementById(participantsId).value);
 
 const loadDefaults = () => {
     const workspaceField = document.getElementById(workspaceId);
@@ -69,7 +69,7 @@ const startCount = () => {
             countedRoleList.push(role.value);
         }
     });
-    const countApproved =  document.getElementsByName('exclude_state')[0].checked == false;
+    const countApproved =  document.getElementsByName('exclude_state')[0].checked === false;
 
     const maxCallCount = 20;
     const basicAuth = btoa(`${username}:${password}`);
@@ -80,22 +80,22 @@ const startCount = () => {
         }
     }
 
-    var prCounter = {};
+    let prCounter = {};
     countedParticipantList.forEach(countedParticipant => prCounter[countedParticipant] = 0);
 
     const createPrPromise = pr => fetch(pr.links.self.href, fetchArguments)
         .then(response => {
             if (!response.ok) {
-                throw new Error(`Failed to fetch data from ${prUrl} with status ${response.status} - ${response.statusText}`);
+                throw new Error(`Failed to fetch data from ${pr.links.self.href} with status ${response.status} - ${response.statusText}`);
             }
 
             return response.json();
         })
         .then(data => data.participants.forEach(participant => {
-                var name = participant.user.display_name;
-                var countParticipant = countedParticipantList.includes(name);
-                var countRole = countedRoleList.includes(participant.role);
-                var countState = participant.approved == false || countApproved == true;
+                let name = participant.user.display_name;
+                let countParticipant = countedParticipantList.includes(name);
+                let countRole = countedRoleList.includes(participant.role);
+                let countState = participant.approved === false || countApproved === true;
                 if (countParticipant && countRole && countState) {
                     prCounter[name]++;
                 }
@@ -106,17 +106,17 @@ const startCount = () => {
         });
 
 
-    var callCount = 0;
-    var prPromiseList = [];
-    var nextUrl = `https://api.bitbucket.org/2.0/repositories/${workspace}/${repository}/pullrequests?state=OPEN&page=1`;
+    let callCount = 0;
+    let prPromiseList = [];
+    let nextUrl = `https://api.bitbucket.org/2.0/repositories/${workspace}/${repository}/pullrequests?state=OPEN&page=1`;
     while (nextUrl != null && callCount < maxCallCount - 1) {
-        var xhr = new XMLHttpRequest();
+        let xhr = new XMLHttpRequest();
         xhr.open('GET', nextUrl, false);
         xhr.setRequestHeader('Authorization', `Basic ${basicAuth}`);
         xhr.onreadystatechange = () => {
-            if (xhr.readyState == XMLHttpRequest.DONE) {
-                if (xhr.status == 200) {
-                    var data = JSON.parse(xhr.responseText);
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    let data = JSON.parse(xhr.responseText);
                     prPromiseList = prPromiseList.concat(data.values.map(createPrPromise));
                     nextUrl = data.next;
                 } else {
@@ -131,9 +131,9 @@ const startCount = () => {
 
     Promise.allSettled(prPromiseList)
         .then(() => {
-            var prCounterStringList = [];
-            for(var name in prCounter) {
-                var count = prCounter[name];
+            let prCounterStringList = [];
+            for(let name in prCounter) {
+                let count = prCounter[name];
                 prCounterStringList.push(`${name}: ${count}`);
             }
 
